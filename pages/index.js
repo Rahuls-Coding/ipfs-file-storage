@@ -1,6 +1,5 @@
 import styles from '../styles/Home.module.css'
 import { useState } from 'react'
-import { video } from 'video'
 import ipfs from "./api/ipfs";
 
 export default function Home() {
@@ -43,7 +42,10 @@ export default function Home() {
       <div> 
         {type 
         ? <embed src={`https://ipfs.infura.io/ipfs/${hash}`} width='800px' height='500px' /> 
-        : <video width="560" height="315" src={`https://ipfs.infura.io/ipfs/${hash}`} frameBorder="0" allowFullScreen></video>
+        : 
+        <video width="560" height="315" preload='auto' controls>
+          <source src={`https://ipfs.infura.io/ipfs/${hash}`} type="video/mp4" />
+        </video>
         }
 
           <div><a href={`https://ipfs.infura.io/ipfs/${hash}`}>Link</a></div> 
