@@ -5,27 +5,35 @@ import { useState } from 'react'
 import ipfs from "./api/ipfs";
 
 export default function Home() {
-
   const [buffer , setBuffer] = useState(null);
   const [hash, setHash] = useState(null);
 
   const fileChange = (event) => {
-    event.preventDefault()
+    event.preventDefault();
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.readAsArrayBuffer(file);
+    reader.onload = () => {
+      const buffer = Buffer.from(reader.result);
+      setBuffer(buffer);
+    }
   }
 
-  const formSubmit = (event) => {
-    event.preventDefault()
+  const formSubmit = async (event) => {
+    event.preventDefault();
+    const fileHash = await ipfs.add(buffer);
+    setHash(fileHash.path);
   }
 
   return (
     <div>
-      <div>
-         Upload to ipfs
-      </div>
+      <h1>Upload to Ipfs</h1>
       <form onSubmit={formSubmit}>
         <input type="file" onChange={fileChange} />
         <input type='submit' />
       </form>
+      {!hash ? null : <img src={`https://ipfs.infura.io/ipfs/${hash}`} /> }
     </div>
   )
+
 }
