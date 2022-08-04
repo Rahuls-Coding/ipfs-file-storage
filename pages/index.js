@@ -6,6 +6,9 @@ import ipfs from "./api/ipfs";
 
 export default function Home() {
 
+  const [buffer , setBuffer] = useState(null);
+  const [hash, setHash] = useState(null);
+
   const fileChange = (event) => {
     event.preventDefault()
   }
