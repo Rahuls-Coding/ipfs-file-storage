@@ -30,9 +30,9 @@ export default function Home() {
       <h1>Upload to Ipfs</h1>
       <form onSubmit={formSubmit}>
         <input type="file" onChange={fileChange} />
-        <input type='submit' />
+      {!buffer ? <div>Please upload a file</div>: <input type='submit' />}
       </form>
-      {!hash ? null : <img src={`https://ipfs.infura.io/ipfs/${hash}`} /> }
+      {!hash ? null : <div><img src={`https://ipfs.infura.io/ipfs/${hash}`} /> <div><a href={`https://ipfs.infura.io/ipfs/${hash}`}>Link</a></div> </div>}
     </div>
   )
 
