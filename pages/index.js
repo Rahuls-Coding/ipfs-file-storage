@@ -1,12 +1,12 @@
-import Head from 'next/head'
-import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import { useState } from 'react'
+import { video } from 'video'
 import ipfs from "./api/ipfs";
 
 export default function Home() {
   const [buffer , setBuffer] = useState(null);
   const [hash, setHash] = useState(null);
+  const [type, setType] = useState(false);
 
   const fileChange = (event) => {
     event.preventDefault();
@@ -16,6 +16,11 @@ export default function Home() {
     reader.onload = () => {
       const buffer = Buffer.from(reader.result);
       setBuffer(buffer);
+    }
+    if (file['type'].split('/')[0] === 'image') {
+      setType(true);
+    } else {
+      setType(false);
     }
   }
 
@@ -32,8 +37,20 @@ export default function Home() {
         <input type="file" onChange={fileChange} />
       {!buffer ? <div>Please upload a file</div>: <input type='submit' />}
       </form>
-      {!hash ? null : <div><img src={`https://ipfs.infura.io/ipfs/${hash}`} /> <div><a href={`https://ipfs.infura.io/ipfs/${hash}`}>Link</a></div> </div>}
+      {!hash 
+      ? null 
+      : 
+      <div> 
+        {type 
+        ? <embed src={`https://ipfs.infura.io/ipfs/${hash}`} width='800px' height='500px' /> 
+        : <video width="560" height="315" src={`https://ipfs.infura.io/ipfs/${hash}`} frameBorder="0" allowFullScreen></video>
+        }
+
+          <div><a href={`https://ipfs.infura.io/ipfs/${hash}`}>Link</a></div> 
+      </div>}
     </div>
   )
 
 }
+
+
