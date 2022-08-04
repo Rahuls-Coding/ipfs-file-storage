@@ -6,9 +6,23 @@ import ipfs from "./api/ipfs";
 
 export default function Home() {
 
+  const fileChange = (event) => {
+    event.preventDefault()
+  }
+
+  const formSubmit = (event) => {
+    event.preventDefault()
+  }
+
   return (
     <div>
-      Upload to ipfs
+      <div>
+         Upload to ipfs
+      </div>
+      <form onSubmit={formSubmit}>
+        <input type="file" onChange={fileChange} />
+        <input type='submit' />
+      </form>
     </div>
   )
 }
