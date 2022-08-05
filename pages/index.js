@@ -1,4 +1,3 @@
-import styles from '../styles/Home.module.css'
 import { useState } from 'react'
 import ipfs from "./api/ipfs";
 
@@ -50,6 +49,7 @@ export default function Home() {
 
           <div><a href={`https://ipfs.infura.io/ipfs/${hash}`}>Link</a></div> 
       </div>}
+      <div>favicon</div>
     </div>
   )
 
