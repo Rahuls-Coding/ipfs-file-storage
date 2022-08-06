@@ -12,8 +12,9 @@ export default function Home() {
     const reader = new FileReader();
     reader.readAsArrayBuffer(file);
     reader.onload = () => {
-      const buffer = Buffer.from(reader.result);
-      setBuffer(buffer);
+      const currentBuffer = Buffer.from(reader.result);
+      console.log(currentBuffer)
+      setBuffer(currentBuffer);
     }
     if (file['type'].split('/')[0] === 'image') {
       setType(true);
@@ -24,6 +25,7 @@ export default function Home() {
 
   const formSubmit = async (event) => {
     event.preventDefault();
+    console.log(buffer.length);
     const fileHash = await ipfs.add(buffer);
     setHash(fileHash.path);
   }
@@ -54,5 +56,4 @@ export default function Home() {
   )
 
 }
-
 
