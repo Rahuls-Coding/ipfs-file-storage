@@ -1,74 +1,80 @@
-import { useState } from 'react'
+import React, {useState, useCallback, useRef} from 'react';
 import ipfs from "./api/ipfs";
+const Hash = require('ipfs-only-hash')
+
+
+
+function resetFileInput(fileInputEl) {
+  if (!fileInputEl) return;
+  fileInputEl.type = "text";
+  fileInputEl.type = "file";
+  fileInputEl.setAttribute("value", "");
+}
+
+async function readFileAsText(file) {
+  const reader = new FileReader();
+  const promise = new Promise((resolve) => {
+    reader.onload = (e) => {
+      const contents = e.target?.result;
+      resolve(contents);
+    };
+  });
+  reader.readAsText(file);
+  return promise;
+}
 
 export default function Home() {
-  const [type, setType] = useState(false);
-  let [hashing, setHashing] = useState([]);
-  const totalHash = []
-
-  const fileChange = (event) => {
-    event.preventDefault();
-      const files = event.target.files;
-      Object.keys(files).forEach( (i) => {
-        const file = files[i]
-        const reader = new FileReader();
-        reader.readAsArrayBuffer(file);
-        reader.onload = async () => {
-          const currentBuffer = [Buffer.from(reader.result)];
-          const filehash = await ipfs.add(currentBuffer);
-          !filehash  ?  null : 
-          totalHash.push(filehash.path)
-          setHashing([...totalHash, filehash])
-          console.log(hashing, 'hashing')
-          console.log(totalHash, 'ternary test')
-          console.log(filehash.path)
-      }
-      if (file['type'].split('/')[0] === 'image') {
-        setType(true);
-      } else {
-        setType(false);
-      }
-      })
-      console.log(totalHash, 'total hash before submit')
-  }
-
-
-  const formSubmit = async (event) => {
-    event.preventDefault();
-    console.log(totalHash, 'total hash');
-  }
-
-
-  const renderFiles = () => {
     
-  }
+  const fileRef = useRef(null);
+  const [file, setFile] = useState(null);
+  const [localHash, setLocalHash] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  return (
-    <div>
-      <h1>Upload to Ipfs</h1>
-      <form onSubmit={formSubmit}>
-        <input type="file" onChange={fileChange} multiple/>
-        <input type='submit' />
-      </form>
-      <div>
-      {!totalHash 
-        ? null 
-        : 
-        <div>
-        {totalHash.map( (i) => {
-            console.log('testing')
-            return <div key={i}><embed src={`https://ipfs.infura.io/ipfs/${totalHash[i]}`} width='800px' height='500px' />
-            <a href={`https://ipfs.infura.io/ipfs/${totalHash}`}>Link</a></div> 
-            //  <video width="560" height="315" preload='auto' controls>
-            //   <source src={`https://ipfs.infura.io/ipfs/${totalHash[i]}`} type="video/mp4" />
-            // </video>
-              }
-            )
-        }
-        </div>
-      }
-      </div>
-    </div>
-  )
+  const updateFile = useCallback(
+    async (file) => {
+      setIsLoading(true);
+      setFile(file);
+      const text = await readFileAsText(file);
+      // options: https://github.com/ipfs-inactive/js-ipfs-unixfs-importer#api
+      const cid = await Hash.of(text, {
+        cidVersion: 1,
+        rawLeaves: true
+      });
+      console.log(cid)
+      setLocalHash(cid);
 
+      // const file = new Blob([str], { type: "plain" });
+      // const remoteHash = await pinFile(apiKey, apiSecret, file);
+      // setRemoteHash(remoteHash);
+      // await unpin(apiKey, apiSecret, remoteHash);
+      // setIsLoading(false);
+    },
+    []
+  );
+
+
+        return (
+            <div>
+                <h1 className='noselect'>Upload to Files</h1>
+                <div className="ba pa1">
+                  <input
+                    ref={fileRef}
+                    type="file"
+                    className="bg-dark-blue white pa2 db w-100"
+                    onChange={(e) => updateFile(e.target.files[0])}
+                  />
+                  {file && (
+                    <iframe
+                      // ref={iframeFilePreview}
+                      src={window.URL.createObjectURL(file)}
+                      width="100%"
+                      title="ipfs preview"
+                      className="db mt1 ba"
+                      style={{ height: "20vh" }}
+                    />
+                  )}
+                </div>
+            </div>
+        )                
+ 
 }

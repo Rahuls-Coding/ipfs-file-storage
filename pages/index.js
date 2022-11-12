@@ -8,7 +8,7 @@ export default function Home() {
     const [buffers, setbuffers] = useState(null);
     let typeOfFile = []
     let newHash = []
-    let thingsToRender = []
+    const [renderThings, setRenderThings] = useState([]);
 
 
     const  readAsArrayBuffer = (file) => {
@@ -44,7 +44,6 @@ export default function Home() {
 
    const  formSubmit = async (event) => {
         event.preventDefault();
-        // console.log(buffers[0], 'buffers on submit 1', buffers[2], 'buffers on submit 2')
         for (let buffer of buffers) {
             console.log('adding to ipfs')
             let filehash = await ipfs.add(buffer)
@@ -63,13 +62,21 @@ export default function Home() {
       //         <source src={`https://ipfs.infura.io/ipfs/${totalHash[i]}`} type="video/mp4" />
       // </video> 
       console.log('rendering...')
-      thingsToRender.push(
-            <embed key={i} src={`https://ipfs.infura.io/ipfs/${newHash[i]}`} width='800px' height='500px' />
-
+      setRenderThings(
+           [...renderThings, <embed key={i} src={`https://ipfs.infura.io/ipfs/${newHash[i]}`} width='800px' height='500px' />]
       )
-      console.log(thingsToRender)
+      console.log(renderThings)
     }
    }
+
+  const rendering= () => {
+    console.log(newHash, 'new hash')
+    return (
+      <embed src={`https://ipfs.io/ipfs/${newHash[0]}`} width='800px' height='500px' />
+    )
+  }
+
+
 
 
         return (
@@ -79,7 +86,7 @@ export default function Home() {
                     <input type="file" onChange={fileChange} multiple/>
                     <input type='submit' />
                 </form>
-                <div>{!thingsToRender ?  thingsToRender : <div>loading..</div>}</div>
+              <button onClick={rendering}>Render</button>
             </div>
         )                
 }

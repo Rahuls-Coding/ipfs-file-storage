@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "ipfs-http-client": "^57.0.3",
+    "ipfs-only-hash": "^4.0.0",
     "it-all": "^1.0.6",
     "next": "12.2.3",
     "next-themes": "^0.2.0",
+    "pure-ipfs-only-hash": "^4.0.2",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
